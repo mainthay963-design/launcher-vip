@@ -1027,6 +1027,8 @@ void CNetGame::Packet_AimSync(Packet * p)
 #define RPC_DONATE_UPD	0x38
 #define RPC_DONATE_SHOWSC	0x39
 #define RPC_DONATE_BUYCAR	0x41
+#define RPC_BR_NOTIFICATION 0x3A
+
 
 #include "../util/CJavaWrapper.h"
 
@@ -1128,6 +1130,30 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			bs.Read(bc);
 		    
 			g_pJavaWrapper->UpdateDonate(money, bc);
+			return;
+		}
+		case RPC_BR_NOTIFICATION:
+		{
+			char szBuff[2048];
+			char text[2048];
+			uint16_t lenText;
+			int type;
+			int duration;
+
+			bs->Read(lenText);
+			memset(szBuff, 0, sizeof(szBuff));
+			memset(text, 0, sizeof(text));
+			bs->Read(szBuff, lenText);
+			
+			// Đổi bảng mã tiếng Việt
+			cp1251_to_utf8(text, szBuff);
+
+			bs->Read(type);
+			bs->Read(duration);
+
+			if(g_pJavaWrapper) {
+				g_pJavaWrapper->ShowBrNotification(text, type, duration);
+			}
 			return;
 		}
 		case RPC_DONATE_SHOWSC:
