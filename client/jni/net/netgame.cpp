@@ -3,6 +3,7 @@
 #include "../game/crosshair.h"
 #include "../game/CRadarRect.h"
 #include "netgame.h"
+#include "vendor/cef/SAMPMobileCef.h"
 #include "../gui/gui.h"
 
 extern CWidgetManager* g_pWidgetManager;
@@ -57,7 +58,7 @@ CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, 
 
 	// voice
 	Network::OnRaknetConnect(szHostOrIp, iPort);
-
+    cef::initNetwork(m_pRakClient, ID_CUSTOM_CEF);
 	m_pPlayerPool = new CPlayerPool();
 	m_pPlayerPool->SetLocalPlayerName(szPlayerName);
 	
@@ -358,7 +359,13 @@ void CNetGame::UpdateNetwork()
 			Packet_CustomRPC(pkt);
 			break;
 		}
-
+		switch (packetIdentifier)
+{
+...
+case ID_CUSTOM_CEF: // the previously specified ID in initNetwork
+    cef::handlePacket(pkt);
+    break;
+}
 		bool breakStatus = false;
 		if(!Network::OnRaknetReceive(*pkt)) breakStatus = true;
 		if(breakStatus) return;
@@ -713,9 +720,9 @@ void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
 
 	// voice
     Network::OnRaknetRpc(RPC_ClientJoin, bsSend);
-
+    
 	m_pRakClient->RPC(&RPC_ClientJoin, &bsSend, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, NULL);
-	
+	cef::handleServerConnection(); // at the end of the function
 	// Custom Packet
 	RakNet::BitStream bsParams;
 	int8_t iVersionMobile = 1;
