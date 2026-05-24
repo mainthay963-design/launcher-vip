@@ -1072,15 +1072,6 @@ private CefClientManager mClientManager = null;
 
     return true;
 }
-    public void surfaceChanged(SurfaceHolder holder, int format,
-                                       int width, int height)
-            {
-                System.out.println("Surface changed: " + width + ", " + height);
-                surfaceWidth = width;
-                surfaceHeight = height;
-                setWindowSize(surfaceWidth, surfaceHeight);
-            }
-
             /**
              * Implementation function: defined in libnvevent.a
              * The application does not and should not overide this; nv_event handles this internally
