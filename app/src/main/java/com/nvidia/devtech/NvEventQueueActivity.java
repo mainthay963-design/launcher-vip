@@ -150,9 +150,6 @@ public abstract class NvEventQueueActivity
 	private TextView customNotificationView = null;
 private Handler notificationHandler = new Handler(Looper.getMainLooper());
 private Runnable hideNotificationRunnable = null;
-private TextView customNotificationView = null;
-private Handler notificationHandler = new Handler(Looper.getMainLooper());
-private Runnable hideNotificationRunnable = null;
 
     /* *
      * Helper function to select fixed window size.
