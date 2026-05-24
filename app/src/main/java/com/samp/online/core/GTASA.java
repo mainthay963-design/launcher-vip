@@ -84,8 +84,10 @@ public class GTASA extends WarMedia {
         super.onCreate(bundle);
 
         // FIX KEYBOARD CHE DIALOG
+        // SOFT_INPUT_ADJUST_PAN: Pan the window, không resize, dialog luôn visible
         getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN |
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
         );
     }
 
