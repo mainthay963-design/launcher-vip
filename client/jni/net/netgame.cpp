@@ -1133,29 +1133,28 @@ void CNetGame::Packet_CustomRPC(Packet* p)
 			return;
 		}
 		case RPC_BR_NOTIFICATION:
-		{
-			char szBuff[2048];
-			char text[2048];
-			uint16_t lenText;
-			int type;
-			int duration;
+    {
+        char szBuff[2048];
+        uint16_t lenText;
+        int type;
+        int duration;
 
-			bs->Read(lenText);
-			memset(szBuff, 0, sizeof(szBuff));
-			memset(text, 0, sizeof(text));
-			bs->Read(szBuff, lenText);
-			
-			// Đổi bảng mã tiếng Việt
-			cp1251_to_utf8(text, szBuff);
-
-			bs->Read(type);
-			bs->Read(duration);
-
-			if(g_pJavaWrapper) {
-				g_pJavaWrapper->ShowBrNotification(text, type, duration);
-			}
-			return;
-		}
+        // Đọc dữ liệu từ BitStream
+        bs.Read(lenText);
+        
+        // Đảm bảo không vượt quá kích thước buffer
+        if (lenText >= sizeof(szBuff)) lenText = sizeof(szBuff) - 1;
+        
+        bs.Read(szBuff, lenText);
+        szBuff[lenText] = '\0'; // Thêm ký tự kết thúc chuỗi để đảm bảo an toàn
+        
+        bs.Read(type);
+        bs.Read(duration);
+        if(g_pJavaWrapper) {
+            g_pJavaWrapper->ShowBrNotification(szBuff, type, duration);
+        }
+        return;
+    }
 		case RPC_DONATE_SHOWSC:
 		{	
 			int money;
