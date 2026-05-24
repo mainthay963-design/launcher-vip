@@ -104,6 +104,14 @@ std::string CJavaWrapper::GetClipboardString()
 
 void CJavaWrapper::ShowInputLayout()
 {
+	// --- FIX: CHẶN BÀN PHÍM ANDROID NẾU ĐANG DÙNG BÀN PHÍM CUSTOM ---
+	if (pKeyBoard && pKeyBoard->IsOpen())
+	{
+		Log(OBFUSCATE("Custom keyboard is open, blocking system keyboard."));
+		return;
+	}
+	// -----------------------------------------------------------------
+
 	JNIEnv* env = GetEnv();
 
 	if (!env)
