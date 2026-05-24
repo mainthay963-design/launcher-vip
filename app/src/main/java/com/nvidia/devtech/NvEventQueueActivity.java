@@ -161,6 +161,12 @@ public abstract class NvEventQueueActivity
     private Twitter mTwitter = null;
     private BrNotification mBrNotification = null;
     private Donate mDonate = null;
+	private TextView customNotificationView = null;
+private Handler notificationHandler = new Handler(Looper.getMainLooper());
+private Runnable hideNotificationRunnable = null;
+private TextView customNotificationView = null;
+private Handler notificationHandler = new Handler(Looper.getMainLooper());
+private Runnable hideNotificationRunnable = null;
 
     /* *
      * Helper function to select fixed window size.
@@ -1569,6 +1575,81 @@ public abstract class NvEventQueueActivity
     public void showPhone() { runOnUiThread(() -> { mTwitter.ShowPhone(); }); }
     public void hidePhone() { runOnUiThread(() -> { mTwitter.HidePhone(); }); }
     public void Posttwitter(String msg, int duration, String url, String playername) { runOnUiThread(() -> mTwitter.AddTwitter(msg, duration, url, playername));}
+public void showBrNotification(final String text, final int type, final int duration) {
+    runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+            // 1. Lấy Root Layout gốc của ứng dụng để đè giao diện lên trên Game
+            final FrameLayout rootView = (FrameLayout) getWindow().getDecorView().findViewById(android.R.id.content);
+            
+            // Nếu đang có một thông báo khác hiển thị, xóa nó đi để hiển thị cái mới
+            if (customNotificationView != null) {
+                rootView.removeView(customNotificationView);
+                if (hideNotificationRunnable != null) {
+                    notificationHandler.removeCallbacks(hideNotificationRunnable);
+                }
+            }
+
+            // 2. Khởi tạo một TextView làm hộp thoại thông báo
+            customNotificationView = new TextView(NvEventQueueActivity.this);
+            customNotificationView.setText(text);
+            customNotificationView.setTextColor(Color.WHITE); // Chữ màu trắng
+            customNotificationView.setTextSize(15); // Kích thước chữ (15sp)
+            customNotificationView.setPadding(45, 25, 45, 25); // Khoảng cách từ chữ đến viền hộp
+            customNotificationView.setGravity(Gravity.CENTER);
+
+            // 3. Tạo hình nền bo góc (Background) cho thông báo
+            GradientDrawable backgroundStyle = new GradientDrawable();
+            backgroundStyle.setCornerRadius(25); // Độ bo tròn góc (Càng cao càng tròn)
+            
+            // Tự động đổi màu nền dựa vào "type" mà Server Pawn gửi xuống
+            switch (type) {
+                case 1: 
+                    // Type = 1: Thông báo thành công -> Màu Xanh Lá (Success)
+                    backgroundStyle.setColor(Color.parseColor("#2ecc71")); 
+                    break;
+                case 2: 
+                    // Type = 2: Thông báo lỗi / nguy hiểm -> Màu Đỏ (Error/Warning)
+                    backgroundStyle.setColor(Color.parseColor("#e74c3c")); 
+                    break;
+                default: 
+                    // Các loại khác hoặc mặc định -> Màu Xám Đen xịn sò (Info)
+                    backgroundStyle.setColor(Color.parseColor("#2c3e50")); 
+                    break;
+            }
+            customNotificationView.setBackground(backgroundStyle);
+
+            // 4. Định vị ví trí hiển thị trên màn hình điện thoại
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, // Rộng vừa đủ theo độ dài chữ
+                    ViewGroup.LayoutParams.WRAP_CONTENT  // Cao vừa đủ
+            );
+            
+            // Đặt thông báo nằm ở CHÍNH GIỮA PHÍA TRÊN màn hình
+            layoutParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL; 
+            layoutParams.topMargin = 80; // Cách mép trên màn hình 80 pixel để không bị đè bởi tai thỏ/camera nốt ruồi
+
+            // Đẩy thông báo lên màn hình game
+            rootView.addView(customNotificationView, layoutParams);
+
+            // 5. Xử lý thời gian tự động biến mất
+            // Nếu Server gửi duration nhỏ (ví dụ: số giây 3, 5) thì nhân với 1000 để ra mili giây
+            int timeToShow = (duration < 100) ? duration * 1000 : duration;
+
+            hideNotificationRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (customNotificationView != null) {
+                        rootView.removeView(customNotificationView);
+                        customNotificationView = null;
+                    }
+                }
+            };
+            // Chờ hết thời gian hiển thị rồi kích hoạt xóa thông báo
+            notificationHandler.postDelayed(hideNotificationRunnable, timeToShow);
+        }
+    });
+}
 
     public void showWelcome(boolean isRegister) { runOnUiThread(() -> mWelcome.show(isRegister) ); }
 
