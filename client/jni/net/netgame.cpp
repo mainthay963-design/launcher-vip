@@ -24,6 +24,7 @@ extern CCrossHair *pCrossHair;
 #define NETGAME_VERSION 4057
 #define AUTH_BS OBFUSCATE("E02262CF28BC542486C558D4BE9EFB716592AFAF8B")
 #define LAUNCHER_NAME OBFUSCATE("MOBILE-MOBILE")
+#define ID_CUSTOM_CEF 252
 
 extern CGame *pGame;
 extern CGUI *pGUI;
@@ -50,60 +51,44 @@ unsigned char GetPacketID(Packet *p)
 		return (unsigned char) p->data[0];
 }
 
-CNetGame::CNetGame(const char* szHostOrIp, int iPort, const char* szPlayerName, const char* szPass)
+CNetGame::CNetGame(const char* szHostOrIp,
+                   int iPort,
+                   const char* szPlayerName,
+                   const char* szPass)
 {
-	strcpy(m_szHostName, OBFUSCATE("San Andreas Multiplayer"));
-	strncpy(m_szHostOrIp, szHostOrIp, sizeof(m_szHostOrIp));
-	m_iPort = iPort;
+    strcpy(m_szHostName, "San Andreas Multiplayer");
+    strncpy(m_szHostOrIp, szHostOrIp, sizeof(m_szHostOrIp));
 
-	// voice
-	Network::OnRaknetConnect(szHostOrIp, iPort);
+    m_iPort = iPort;
+    m_pRakClient = RakNetworkFactory::GetRakClientInterface();
     cef::initNetwork(m_pRakClient, ID_CUSTOM_CEF);
-	m_pPlayerPool = new CPlayerPool();
-	m_pPlayerPool->SetLocalPlayerName(szPlayerName);
-	
-	m_pVehiclePool = new CVehiclePool();
-	m_pObjectPool = new CObjectPool();
-	m_pPickupPool = new CPickupPool();
-	m_pGangZonePool = new CGangZonePool();
-	m_pLabelPool = new CText3DLabelsPool();
-	m_pTextDrawPool = new CTextDrawPool();
-	g_pWidgetManager = new CWidgetManager();
-	//m_pStreamPool = new CStreamPool();
-	m_pActorPool = new CActorPool();
+    RegisterRPCs(m_pRakClient);
+    RegisterScriptRPCs(m_pRakClient);
 
-	m_pRakClient = RakNetworkFactory::GetRakClientInterface();
-	RegisterRPCs(m_pRakClient);
-	RegisterScriptRPCs(m_pRakClient);
-	m_pRakClient->SetPassword(szPass);
+    m_pRakClient->SetPassword(szPass);
+    m_pPlayerPool = new CPlayerPool();
+    m_pPlayerPool->SetLocalPlayerName(szPlayerName);
 
-	m_dwLastConnectAttempt = GetTickCount();
-	m_iGameState = 	GAMESTATE_WAIT_CONNECT;
+    m_pVehiclePool = new CVehiclePool();
+    m_pObjectPool = new CObjectPool();
+    m_pPickupPool = new CPickupPool();
+    m_pGangZonePool = new CGangZonePool();
+    m_pLabelPool = new CText3DLabelsPool();
+    m_pTextDrawPool = new CTextDrawPool();
+    m_pActorPool = new CActorPool();
 
-	m_iSpawnsAvailable = 0;
-	m_bHoldTime = true;
-	m_byteWorldMinute = 0;
-	m_byteWorldTime = 12;
-	m_byteWeather =	10;
-	m_fGravity = (float)0.008000000;
-	m_bUseCJWalk = false;
-	m_bDisableEnterExits = false;
-	m_fNameTagDrawDistance = 60.0f;
-	m_bZoneNames = false;
-	m_bInstagib = false;
-	m_iDeathDropMoney = 0;
-	m_bNameTagLOS = false;
+    g_pWidgetManager = new CWidgetManager();
 
-	for(int i=0; i<100; i++)
-		m_dwMapIcons[i] = 0;
+    m_dwLastConnectAttempt = GetTickCount();
+    m_iGameState = GAMESTATE_WAIT_CONNECT;
 
-	pGame->EnableClock(false);
-	pGame->EnableZoneNames(false);
-
-	if(pChatWindow)
-		pChatWindow->AddDebugMessage(OBFUSCATE("{FFFFFF}SA-MP {0080FE}" SAMP_VERSION " {FFFFFF}Started"));
+    if(pChatWindow)
+    {
+        pChatWindow->AddDebugMessage(
+            "{FFFFFF}SA-MP {0080FE}" SAMP_VERSION " {FFFFFF}Started"
+        );
+    }
 }
-
 CNetGame::~CNetGame()
 {
 	m_pRakClient->Disconnect(0);
@@ -358,19 +343,12 @@ void CNetGame::UpdateNetwork()
 			case ID_CUSTOM_RPC:
 			Packet_CustomRPC(pkt);
 			break;
+			case ID_CUSTOM_CEF:
+    {
+        cef::handlePacket(pkt);
+        break;
+	}
 		}
-		switch (packetIdentifier)
-{
-...
-case ID_CUSTOM_CEF: // the previously specified ID in initNetwork
-    cef::handlePacket(pkt);
-    break;
-}
-		bool breakStatus = false;
-		if(!Network::OnRaknetReceive(*pkt)) breakStatus = true;
-		if(breakStatus) return;
-
-		m_pRakClient->DeallocatePacket(pkt);
 	}
 }
 
@@ -722,8 +700,7 @@ void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
     Network::OnRaknetRpc(RPC_ClientJoin, bsSend);
     
 	m_pRakClient->RPC(&RPC_ClientJoin, &bsSend, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, NULL);
-	cef::handleServerConnection(); // at the end of the function
-	// Custom Packet
+	
 	RakNet::BitStream bsParams;
 	int8_t iVersionMobile = 1;
 	int8_t launcher = 1;
@@ -733,6 +710,7 @@ void CNetGame::Packet_ConnectionSucceeded(Packet* pkt)
 	bsParams.Write(byteLauncherLen);
 	bsParams.Write(LAUNCHER_NAME, byteLauncherLen);
 	m_pRakClient->RPC(&RPC_CustomJoin, &bsParams, HIGH_PRIORITY, RELIABLE, 0, false, UNASSIGNED_NETWORK_ID, NULL);
+	cef::handleServerConnection();
 }
 
 void CNetGame::SendDonateCar(int carid, int carcost)
