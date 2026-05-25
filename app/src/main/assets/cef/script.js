@@ -97,6 +97,61 @@ function showNotification(eventData) {
     }
     createToast(type, title, message);
 }
+/* ================= INVENTORY ================= */
+
+document.getElementById('close-inv-btn').onclick = () => {
+    document.getElementById('inventory-container').classList.add('hidden');
+    // Gửi tín hiệu về cho Pawn biết người chơi đã đóng túi đồ (để nhả chuột/freeze)
+    Cef.sendEvent("inventory_action", JSON.stringify(["close", 0]));
+};
+
+function renderInventory(eventData) {
+    const data = JSON.parse(eventData);
+    const action = data[0]; // "show" hoặc "hide"
+    
+    const container = document.getElementById('inventory-container');
+
+    if (action === "hide") {
+        container.classList.add('hidden');
+        return;
+    }
+
+    // Mở túi đồ
+    container.classList.remove('hidden');
+    
+    // Parse dữ liệu vật phẩm Pawn gửi qua (data[1] chứa chuỗi JSON mảng vật phẩm)
+    const items = JSON.parse(data[1]); 
+    const grid = document.getElementById('inv-grid');
+    grid.innerHTML = ""; // Xóa dữ liệu cũ
+
+    const TOTAL_SLOTS = 16; // Số ô đồ mặc định là 16 (4x4)
+
+    for (let i = 0; i < TOTAL_SLOTS; i++) {
+        const slot = document.createElement("div");
+        slot.classList.add("inv-slot");
+
+        if (i < items.length) {
+            // Có vật phẩm ở slot này
+            slot.innerHTML = `
+                <div class="item-name">${items[i].name}</div>
+                <div class="item-qty">x${items[i].amount}</div>
+            `;
+            // Khi click vào vật phẩm -> Gửi Event về Pawn (Action: "use", ItemID)
+            slot.onclick = () => {
+                let outData = ["use", items[i].id];
+                Cef.sendEvent("inventory_action", JSON.stringify(outData));
+            };
+        } else {
+            // Slot trống
+            slot.classList.add("empty");
+        }
+
+        grid.appendChild(slot);
+    }
+}
+
+// Đăng ký event để Pawn gọi
+Cef.registerEventCallback("inventory_show", "renderInventory");
 
 /* ================= REGISTER EVENTS ================= */
 
