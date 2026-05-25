@@ -139,55 +139,8 @@ function updatePlayerStatus(eventData) {
     if (data[0] <= 15 || data[1] <= 15) overlay.classList.add('vignette-danger'); else overlay.classList.remove('vignette-danger');
 }
 
-/* ================= MINIGAME HÁI CẦN SA (FIXED SHOW/HIDE) ================= */
-let weedMinigameScore = 0;
-let weedTargetKey = '';
-let minigameActive = false;
-
-function startWeedMinigame() {
-    weedMinigameScore = 0;
-    minigameActive = true;
-    document.getElementById('weed-progress-bar').style.width = '0%';
-    document.getElementById('weed-score').innerText = `Điểm: 0 / 100`;
-    document.getElementById('weed-minigame').classList.remove('hidden'); // HIỆN
-    pickNextWeedKey();
-}
-
-function stopWeedMinigame() {
-    minigameActive = false;
-    document.getElementById('weed-minigame').classList.add('hidden'); // ẨN
-}
-
-function pickNextWeedKey() {
-    if (!minigameActive) return;
-    const WEED_KEYS = ['Y', 'N', 'H', 'ESC'];
-    weedTargetKey = WEED_KEYS[Math.floor(Math.random() * WEED_KEYS.length)];
-    document.getElementById('weed-key-hint').innerText = weedTargetKey;
-}
-
-window.handleMobileKeyClick = function(clickedKey) {
-    if (!minigameActive) return;
-    if (clickedKey === weedTargetKey) weedMinigameScore += 10;
-    else weedMinigameScore -= 11;
-    
-    let score = Math.min(100, Math.max(-30, weedMinigameScore));
-    document.getElementById('weed-progress-bar').style.width = Math.max(0, score) + '%';
-    document.getElementById('weed-score').innerText = `Điểm: ${score} / 100`;
-
-    if (score >= 100) endWeedMinigame("win");
-    else if (score <= -30) endWeedMinigame("lose");
-    else pickNextWeedKey();
-};
-
-function endWeedMinigame(result) {
-    stopWeedMinigame(); // Tự ẩn khi xong
-    setTimeout(() => { Cef.sendEvent("weed_minigame_result", JSON.stringify([result])); }, 200);
-}
-
 /* ================= EVENT REGISTRATION ================= */
 Cef.registerEventCallback("inventory_show", "renderInventory");
 Cef.registerEventCallback("alert_show", "showAlert");
 Cef.registerEventCallback("notification_show", "showNotification");
 Cef.registerEventCallback("hud_update", "updatePlayerStatus");
-Cef.registerEventCallback("weed_minigame_show", "startWeedMinigame");
-Cef.registerEventCallback("weed_minigame_hide", "stopWeedMinigame");
