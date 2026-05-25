@@ -90,7 +90,7 @@ function showNotification(eventData) {
     createToast(type, title, message, duration);
 }
 
-/* ================= INVENTORY & EQUIPMENT (ĐÃ NÂNG CẤP) ================= */
+/* ================= INVENTORY & EQUIPMENT ================= */
 
 let selectedItem = null;
 
@@ -137,7 +137,8 @@ function renderInventory(eventData) {
 
         if (i < items.length) {
             const item = items[i];
-            const iconPath = item.icon ? `assets/items/${item.icon}` : "";
+            // ĐÃ SỬA: Lấy trực tiếp đường dẫn từ Server Pawn (Ví dụ: "images/items/banhmi.jpeg")
+            const iconPath = item.icon ? item.icon : "";
 
             slot.innerHTML = `
                 ${item.icon ? `<img class="item-icon" src="${iconPath}" alt="">` : ""}
@@ -194,7 +195,8 @@ function renderInventory(eventData) {
             if (targetHtmlId) {
                 const slot = document.getElementById(targetHtmlId);
                 if (slot) {
-                    const iconPath = equip.icon ? `assets/items/${equip.icon}` : "";
+                    // ĐÃ SỬA: Lấy trực tiếp đường dẫn từ Server Pawn cho phần trang bị luôn
+                    const iconPath = equip.icon ? equip.icon : "";
 
                     slot.innerHTML = `
                         ${equip.icon ? `<img class="item-icon" src="${iconPath}" alt="">` : ""}
