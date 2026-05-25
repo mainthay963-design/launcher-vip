@@ -4,54 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CEF Example Web</title>
-
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <!-- ALERT -->
-
     <div id="alert-overlay" class="hidden">
         <div class="alert-box">
             <div class="alert-content">
-
                 <div class="alert-icon">
                     <span>?</span>
                 </div>
-
                 <div class="alert-title" id="alert-title">
                     Confirm Title
                 </div>
-
                 <div class="alert-message" id="alert-message">
                     Confirm Message
                 </div>
-
                 <div class="alert-buttons">
                     <button id="okay-button" class="okay-button">
                         Okay
                     </button>
-
                     <button id="cancel-button" class="cancel-button">
                         Cancel
                     </button>
                 </div>
-
             </div>
         </div>
     </div>
 
-    <!-- NOTIFICATION -->
-
     <div id="toast-container"></div>
-        <div id="inventory-container" class="hidden">
+
+    <div id="inventory-container" class="hidden">
         <div class="inv-header">
             <span class="inv-title">TÚI ĐỒ CỦA BẠN</span>
             <span class="close-inv" id="close-inv-btn">✖</span>
         </div>
+        
         <div class="inv-grid" id="inv-grid">
             </div>
-    </div>
+
+        <div id="item-action-modal" class="hidden">
+            <div class="action-box">
+                <div id="action-item-name">TÊN VẬT PHẨM</div>
+                <div class="action-buttons">
+                    <button id="btn-use-item" class="btn-action btn-use">SỬ DỤNG</button>
+                    <button id="btn-info-item" class="btn-action btn-info">THÔNG TIN</button>
+                    <button id="btn-drop-item" class="btn-action btn-drop">VỨT BỎ</button>
+                    <button id="btn-close-action" class="btn-action btn-close">QUAY LẠI</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="item-info-modal" class="hidden">
+            <div class="info-box">
+                <div id="info-item-title">TÊN VẬT PHẨM</div>
+                <div id="info-item-desc">Mô tả chi tiết về vật phẩm sẽ hiển thị ở đây...</div>
+                <button id="btn-close-info">ĐÓNG</button>
+            </div>
+        </div>
+        
+        </div>
+
     <script src="script.js"></script>
 </body>
 </html>
