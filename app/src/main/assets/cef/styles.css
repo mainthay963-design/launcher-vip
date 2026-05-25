@@ -591,7 +591,8 @@ body {
     .item-qty {
         font-size: 2.8vw;
     }
-    }
+}
+
 #hud-status-container {
     position: fixed;
     bottom: 20px;
@@ -645,6 +646,7 @@ body {
     width: 35px;
     text-align: right;
 }
+
 #screen-effect-overlay {
     position: fixed;
     top: 0;
@@ -675,34 +677,4 @@ body {
     100% {
         box-shadow: inset 0 0 120px rgba(255, 0, 0, 0.8);
     }
-}
-/* ================= BÀN PHÍM ẢO MOBILE ================= */
-.mobile-keyboard {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
-    padding: 10px;
-}
-
-.mobile-keyboard button {
-    background: #374151; /* Màu nền xám đậm */
-    color: white;
-    border: 2px solid #4b5563;
-    padding: 15px 25px; /* Kích thước to vừa ngón tay */
-    border-radius: 10px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.1s;
-    user-select: none; /* Ngăn bôi đen chữ khi chạm */
-    -webkit-tap-highlight-color: transparent; /* Loại bỏ lớp màu xanh mặc định trên Android khi nhấn */
-    outline: none;
-}
-
-/* Hiệu ứng khi nhấn vào nút */
-.mobile-keyboard button:active {
-    background: #10b981; /* Chuyển sang màu xanh lá khi nhấn */
-    border-color: #34d399;
-    transform: scale(0.95); /* Thu nhỏ nhẹ tạo hiệu ứng ấn nút */
 }
