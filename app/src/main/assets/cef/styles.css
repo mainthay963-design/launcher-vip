@@ -592,3 +592,57 @@ body {
         font-size: 2.8vw;
     }
     }
+#hud-status-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 15px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    z-index: 99;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-icon {
+    font-size: 16px;
+}
+
+.status-bar {
+    width: 120px;
+    height: 10px;
+    background: #222;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid #444;
+}
+
+#food-fill {
+    height: 100%;
+    background: #ff9800; /* Màu cam cho thức ăn */
+    transition: width 0.4s ease-in-out;
+}
+
+#water-fill {
+    height: 100%;
+    background: #2196f3; /* Màu xanh biển cho nước uống */
+    transition: width 0.4s ease-in-out;
+}
+
+.status-text {
+    font-size: 11px;
+    font-weight: bold;
+    width: 35px;
+    text-align: right;
+}
+
