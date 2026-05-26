@@ -1,0 +1,140 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    user-select: none; 
+}
+
+/* Quan trọng: Màn hình phải trong suốt để thấy in-game */
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent; 
+    overflow: hidden;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ================================
+   GIAO DIỆN MÁY TÍNH BẢNG (TABLET)
+   ================================ */
+.tablet {
+    width: 800px;
+    height: 450px;
+    background-color: #111;
+    border-radius: 30px;
+    padding: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    position: absolute; 
+    z-index: 50;
+    
+    /* Ẩn mặc định, game gọi event mới show */
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8) translateY(50px);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.tablet.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) translateY(0);
+}
+
+/* Các thuộc tính bên trong Tablet giữ nguyên */
+.notch {
+    position: absolute; left: 12px; top: 50%;
+    transform: translateY(-50%); width: 25px; height: 140px;
+    background-color: #111; border-radius: 0 15px 15px 0; z-index: 10;
+}
+.screen {
+    width: 100%; height: 100%; border-radius: 20px;
+    background: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2144') no-repeat center center/cover;
+    position: relative; display: flex; flex-direction: column;
+    align-items: center; overflow: hidden;
+}
+.screen::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.15); z-index: 1;
+}
+.app-grid {
+    position: relative; z-index: 2; display: grid;
+    grid-template-columns: repeat(5, 1fr); gap: 15px 35px;
+    margin-top: 40px; width: 90%; padding-left: 20px; 
+}
+.app {
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer; transition: transform 0.1s ease-in-out;
+}
+.app:active { transform: scale(0.95); }
+.icon {
+    width: 60px; height: 60px; border-radius: 18px; display: flex;
+    justify-content: center; align-items: center; font-size: 22px;
+    color: rgba(255, 255, 255, 0.6); margin-bottom: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.bg-dark { background-color: rgba(30, 30, 30, 0.85); }
+.bg-brown { background-color: rgba(70, 50, 40, 0.85); }
+.bg-olive { background-color: rgba(90, 80, 30, 0.85); }
+.bg-red { background-color: rgba(90, 30, 30, 0.85); }
+.bg-teal { background-color: rgba(40, 70, 80, 0.85); }
+.bg-green-dark { background-color: rgba(50, 70, 40, 0.85); }
+.bg-blue-dark { background-color: rgba(40, 50, 70, 0.85); }
+.dock-green { background-color: #2ecc71; }
+.dock-orange { background-color: #f39c12; }
+.dock-purple { background-color: #8e44ad; }
+.dock-gray { background-color: #7f8c8d; }
+
+.label {
+    color: #ffffff; font-size: 12px; font-weight: 500;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); 
+    text-align: center; white-space: nowrap;
+}
+.dock {
+    position: absolute; bottom: 25px; z-index: 2; display: flex; gap: 20px;
+    padding: 12px 25px; border-radius: 25px;
+    background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.dock .icon { color: #fff; opacity: 1; }
+.home-indicator {
+    position: absolute; bottom: 5px; width: 130px; height: 4px;
+    background-color: rgba(255, 255, 255, 0.5); border-radius: 2px; z-index: 5;
+}
+
+/* ================================
+   GIAO DIỆN ALERT BOX (CEF Example)
+   ================================ */
+#alert-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 999; /* Luôn đè lên trên tablet */
+}
+.alert-box {
+    background-color: white; border-radius: 12px; width: 320px;
+    text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: popIn 0.3s ease-out forwards;
+}
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.alert-content { padding: 25px; }
+.alert-icon { font-size: 45px; color: #609ad4; margin-bottom: 15px; }
+.alert-title { font-weight: bold; font-size: 20px; margin-bottom: 10px; color: #333; }
+.alert-message { margin-bottom: 20px; color: #666; font-size: 15px; }
+.alert-buttons button {
+    padding: 10px 20px; border: none; border-radius: 6px;
+    margin: 0 5px; cursor: pointer; font-weight: bold; font-size: 14px;
+    transition: 0.2s;
+}
+.okay-button { background-color: #609ad4; color: white; }
+.okay-button:hover { background-color: #4b7dae; }
+.cancel-button { background-color: #f08080; color: white; }
+.cancel-button:hover { background-color: #d16969; }
