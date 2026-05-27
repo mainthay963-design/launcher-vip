@@ -15,11 +15,6 @@ if (typeof Cef !== 'undefined') {
     Cef.registerEventCallback("tablet_toggle", "toggleTabletUI");
 }
 
-/* =========================================
-   2. HỆ THỐNG CLICK APP (GỬI LỆNH LÊN GAME)
-   ========================================= */
-
-// Hàm chạy khi click vào các icon app
 function handleAppClick(appName, isLocked) {
     if (isLocked) {
         // Nếu app bị khóa -> Dùng luôn hệ thống Alert in-game
