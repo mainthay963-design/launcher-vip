@@ -1,10 +1,5 @@
 const tabletMenu = document.getElementById('tabletMenu');
 
-/* =========================================
-   1. HỆ THỐNG MENU TABLET (NHẬN LỆNH TỪ GAME)
-   ========================================= */
-
-// Game gọi event này để Tắt/Mở menu. Data nhận về có thể là [1] (mở) hoặc [0] (tắt)
 function toggleTabletUI(eventData) {
     const eventDataJson = JSON.parse(eventData);
     const state = parseInt(eventDataJson[0]); 
